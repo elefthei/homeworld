@@ -33,6 +33,9 @@ func (k KncServer) kncRequest(data []byte) ([]byte, error) {
 
 	response, err := cmd.Output()
 	if err != nil {
+		if ee, ok := err.(*exec.ExitError); ok && len(ee.Stderr) > 0 {
+			err = fmt.Errorf("%s {\n--- stderr ---\n%s\n--- stderr ---\n}", ee.Error(), string(ee.Stderr))
+		}
 		return nil, err
 	}
 
